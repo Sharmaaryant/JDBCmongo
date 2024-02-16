@@ -1,0 +1,29 @@
+package com.rays.test;
+
+import com.rays.bean.UserBean;
+import com.rays.model.UserModel;
+
+public class UserModelTest {
+	
+	public static UserModel userModel = new UserModel();
+	
+	public static void main(String[] args) {
+		 testAdd();
+	}
+
+	private static void testAdd() {
+	try {
+		UserBean bean = new UserBean();
+		
+		bean.setFirstName("vimal");
+		bean.setLastName("kumar");
+		bean.setLogin("abc@gmail.com");
+		bean.setPassword("1234");
+		userModel.add(bean);
+	} catch (Exception e) {
+		// TODO: handle exception
+	}
+		
+	}
+
+}

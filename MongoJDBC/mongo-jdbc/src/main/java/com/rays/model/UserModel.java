@@ -1,0 +1,164 @@
+package com.rays.model;
+
+import java.sql.PreparedStatement;
+import java.util.List;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
+import com.rays.bean.UserBean;
+
+public class UserModel {
+
+	public Integer nextPK() {
+		int pk = 0;
+		String uri = "mongodb://localhost:27017";
+
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+
+			Document sequenceDocument = (Document) collection.findOneAndUpdate(new Document("_id", pk),
+					new Document("$inc", new Document("pk", 1)),
+					new FindOneAndUpdateOptions().upsert(true).returnDocument(ReturnDocument.AFTER));
+			return sequenceDocument.getInteger("pk");
+
+		}
+
+	}
+
+	public long add(UserBean bean) {
+
+		int pk = 0;
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			pk = nextPK();
+
+			InsertOneResult result = collection.insertOne(new Document().append("_id", pk)
+					.append("fname", bean.getFirstName()).append("lname", bean.getLastName())
+					.append("login", bean.getLogin()).append("password", bean.getPassword()));
+
+			System.out.println(pk);
+
+		}
+		return pk;
+
+	}
+
+	public void update(UserBean bean) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+
+			// Define the filter to find the documents to update
+			Document filter = new Document("_id", bean.getId());
+
+			// Define the update operation(s)
+			Document update = new Document("$set", new Document("fname", bean.getFirstName()).append("lame", bean.getLastName())
+					.append("login", bean.getLogin()).append("password", bean.getPassword()));
+
+			// Perform the update for multiple documents
+			collection.updateMany(filter, update);
+
+			System.out.println("Documents updated successfully.");
+		}
+	}
+	
+	public void delete(UserBean bean) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+		
+			Document filter =  new Document("_id" , bean.getId());
+			
+			collection.deleteOne(filter);
+		
+		}
+
+	}
+	
+	public UserBean findByid(int id) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			
+			
+
+		       
+		        Document filter = new Document("_id", id);
+		        
+		        Document result =  (Document) collection.find(filter).first();
+		        
+		        if (result != null) {
+	                System.out.println("Document found: " + result.toJson());
+	            } else {
+	                System.out.println("Document not found.");
+	            }
+			
+		}
+		
+		return null;
+		
+	}
+	
+	public UserBean findByLogin(String login) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			
+			
+
+		       
+		        Document filter = new Document("login", login);
+		        
+		        Document result =  (Document) collection.find(filter).first();
+		        
+		        if (result != null) {
+	                System.out.println("Document found: " + result.toJson());
+	            } else {
+	                System.out.println("Document not found.");
+	            }
+			
+		}
+		
+		return null;
+		
+	}
+	
+	public List search(UserBean bean , int pageNo , int pageSiz) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			
+			 MongoCursor<Document> cursor = collection.find().iterator();
+		            while (cursor.hasNext()) {
+		                Document document = cursor.next();
+		                
+		                System.out.println(document.toJson());
+		}
+		
+		
+		
+		
+	}
+		return null ;}
+}

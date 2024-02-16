@@ -1,0 +1,100 @@
+package com.rays.test;
+
+import org.bson.Document;
+
+import com.rays.bean.UserBean;
+import com.rays.model.UserModel;
+
+public class UserModelTest {
+
+	public static UserModel userModel = new UserModel();
+
+	public static void main(String[] args) {
+		testAdd();
+		// testupdate();
+		//testdelete();
+		//testFindByPk();
+		//testFindByLogin();
+		testsearch();
+
+	}
+
+	private static void testsearch() {
+	UserBean bean  = new UserBean();
+		
+		userModel.search(bean, 1, 3);
+		
+		
+	}
+		
+	
+
+	private static void testFindByLogin() {
+		try {
+			UserBean bean = new UserBean();
+			String login = "bca@123" ;
+			UserModel model = new UserModel();
+			bean = model.findByLogin(login);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+	private static void testFindByPk() {
+		try {
+			UserBean bean = new UserBean();
+			int pk = 3;
+			UserModel model = new UserModel();
+			bean = model.findByid(pk);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+	private static void testAdd() {
+		try {
+			UserBean bean = new UserBean();
+
+			bean.setFirstName("kesal");
+			bean.setLastName("kumar");
+			bean.setLogin("abc@gmail.com");
+			bean.setPassword("1234");
+			userModel.add(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+	private static void testupdate() {
+		try {
+			UserBean bean = new UserBean();
+
+			bean.setId(1);
+			bean.setFirstName("aryant");
+			bean.setLastName("kushwah");
+			bean.setLogin("bca@123");
+			bean.setPassword("0987");
+			userModel.update(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+	
+	private static void testdelete() {
+		try {
+			UserBean bean = new UserBean();
+			bean.setId(2);
+			userModel.delete(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+
+}

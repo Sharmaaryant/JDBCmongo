@@ -1,0 +1,52 @@
+package com.rays.bean;
+
+
+
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.rays.bean.UserBean;
+
+public class UserModel {
+
+    public Integer nextPK() {
+        String uri = "mongodb://localhost:27017";
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase database = mongoClient.getDatabase("jdbc");
+            MongoCollection<Document> collection = database.getCollection("user");
+
+            Document sequenceDocument = collection.findOneAndUpdate(
+                    new Document("_id", "userId"), // Use a string as _id
+                    new Document("$inc", new Document("pk", 1)),
+                    new FindOneAndUpdateOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
+            );
+
+            return sequenceDocument.getInteger("pk");
+        }
+    }
+
+    public long add(UserBean bean) {
+        int pk;
+        String uri = "mongodb://localhost:27017";
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase database = mongoClient.getDatabase("jdbc");
+            MongoCollection<Document> collection = database.getCollection("student");
+            pk = nextPK();
+
+            collection.insertOne(new Document()
+                    .append("_id", pk) // Use _id for the unique identifier
+                    .append("fname", "ram")
+                    .append("lame", "sharma")
+                    .append("login", "bca@1234")
+                    .append("password", "ram123"));
+
+            System.out.println(pk);
+        }
+
+        return pk;
+    }
+}

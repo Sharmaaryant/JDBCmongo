@@ -1,0 +1,85 @@
+package com.rays.model;
+
+import java.sql.PreparedStatement;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
+import com.rays.bean.UserBean;
+
+public class UserModel {
+
+	public Integer nextPK() {
+		int pk = 0;
+		String uri = "mongodb://localhost:27017";
+		
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			
+
+			Document sequenceDocument = (Document) collection.findOneAndUpdate(new Document("_id", pk),
+					new Document("$inc", new Document("pk", 1)),
+					new FindOneAndUpdateOptions().upsert(true).returnDocument(ReturnDocument.AFTER));
+			return sequenceDocument.getInteger("pk");
+			
+
+		}
+
+	}
+
+	public long add(UserBean bean) {
+
+		int pk = 0;
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			pk = nextPK();
+
+			InsertOneResult result = collection.insertOne(new Document().append("_id", pk)
+					.append("fname", bean.getFirstName()).append("lname", bean.getLastName())
+					.append("login", bean.getLogin()).append("password", bean.getPassword()));
+			
+			System.out.println(pk);
+
+		}
+		return pk;
+
+	}
+	
+	
+	public void delete(UserBean bean) {
+		String uri = "mongodb://localhost:27017";
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+		
+			Document query = new Document().append("title",  "Cool Runnings 2");
+            // Creates instructions to update the values of three document fields
+            Bson updates = Updates.combine(
+                    Updates.set("runtime", 99),
+                    Updates.addToSet("genres", "Sports"),
+                    Updates.currentTimestamp("lastUpdated"));
+            // Instructs the driver to insert a new document if none match the query
+            UpdateOptions options = new UpdateOptions().upsert(true);
+           
+                // Updates the first document that has a "title" value of "Cool Runnings 2"
+                UpdateResult result = collection.updateOne(query, updates, options);
+		
+		
+		}
+	}
+
+}

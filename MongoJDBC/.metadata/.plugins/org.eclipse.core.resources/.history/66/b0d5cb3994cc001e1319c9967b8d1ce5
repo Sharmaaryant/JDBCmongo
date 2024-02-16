@@ -1,0 +1,81 @@
+package com.rays.test;
+
+import com.rays.bean.UserBean;
+import com.rays.model.UserModel;
+
+public class UserModelTest {
+
+	public static UserModel userModel = new UserModel();
+
+	public static void main(String[] args) {
+		//testAdd();
+		// testupdate();
+		//testdelete();
+		testFindByPk();
+
+	}
+
+	private static void testFindByPk() {
+		try {
+			UserBean bean = new UserBean();
+			int pk = 1;
+			UserModel model = new UserModel();
+			bean = model.findByid(pk);
+			if (bean == null) {
+				System.out.println("Test find by pk fail");
+			}
+			System.out.println(bean.getId());
+			System.out.println(bean.getFirstName());
+			System.out.println(bean.getLastName());
+			System.out.println(bean.getLogin());
+			System.out.println(bean.getPassword());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+	private static void testAdd() {
+		try {
+			UserBean bean = new UserBean();
+
+			bean.setFirstName("kesal");
+			bean.setLastName("kumar");
+			bean.setLogin("abc@gmail.com");
+			bean.setPassword("1234");
+			userModel.add(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+	private static void testupdate() {
+		try {
+			UserBean bean = new UserBean();
+
+			bean.setId(1);
+			bean.setFirstName("aryant");
+			bean.setLastName("kushwah");
+			bean.setLogin("bca@123");
+			bean.setPassword("0987");
+			userModel.update(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+	
+	private static void testdelete() {
+		try {
+			UserBean bean = new UserBean();
+			bean.setId(2);
+			userModel.delete(bean);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+
+}

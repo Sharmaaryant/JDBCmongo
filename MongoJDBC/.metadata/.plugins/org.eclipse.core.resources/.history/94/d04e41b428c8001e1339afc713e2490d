@@ -1,0 +1,78 @@
+package com.rays.model;
+
+
+
+
+
+
+import java.sql.PreparedStatement;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.result.InsertOneResult;
+import com.rays.bean.UserBean;
+
+public class UserModel {
+	
+	public Integer nextPK() {
+		
+		
+		String uri = "mongodb://localhost:27017";
+		int pk = 0 ;
+		try(MongoClient mongoClient = MongoClients.create(uri)) {
+			MongoDatabase database = mongoClient.getDatabase("jdbc");
+			MongoCollection collection = database.getCollection("user");
+			
+			
+			 Document sequenceDocument = (Document) collection.findOneAndUpdate(
+		                new Document("_id", pk),
+		                new Document("$inc", new Document("pk" , 1)),
+		                new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+		        );
+			 return sequenceDocument.getInteger("pk");
+		
+		}
+		
+		
+		
+		
+		
+		
+	}
+	
+public long add(UserBean bean) {
+
+	int pk = 0;
+		  String uri = "mongodb://localhost:27017";
+			try (MongoClient mongoClient = MongoClients.create(uri)) {
+				MongoDatabase database = mongoClient.getDatabase("jdbc");
+				MongoCollection collection = database.getCollection("user");
+				pk = nextPK();
+				
+					Document document= new Document("pk", pk)
+							.append("fname",bean.getFirstName() )
+							.append("lame", bean.getLastName())
+							.append("login", bean.getLogin())
+							.append("password", bean.getPassword());
+					collection.insertOne(document);
+					System.out.println("User inserted: " + document.toJson());
+				System.out.println(pk);
+				
+			} 
+			return pk;
+			
+	}
+			
+		
+	
+		
+	}
+
+
